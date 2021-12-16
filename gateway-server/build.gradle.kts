@@ -3,8 +3,17 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "2.6.1"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id("org.jetbrains.kotlin.plugin.allopen") version "1.6.10"
+    id("org.jetbrains.kotlin.plugin.noarg") version "1.6.10"
     kotlin("jvm") version "1.6.0"
     kotlin("plugin.spring") version "1.6.0"
+}
+
+allOpen {
+    annotation("javax.persistence.Entity")
+}
+noArg {
+    annotation("javax.persistence.Entity")
 }
 
 group = "me.donghun"
@@ -20,6 +29,10 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.springframework.cloud:spring-cloud-starter-gateway:3.1.0")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.postgresql:postgresql:42.3.1")
+
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.cloud:spring-cloud-contract-wiremock:3.1.0")
