@@ -1,6 +1,5 @@
-package me.donghun.gatewayserver.account
+package me.donghun.apiserver.account
 
-import me.donghun.gatewayserver.UserRole
 import javax.persistence.*
 
 @Entity

@@ -1,4 +1,4 @@
-package me.donghun.gatewayserver
+package me.donghun.apiserver
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm

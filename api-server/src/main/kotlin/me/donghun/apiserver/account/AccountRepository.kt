@@ -1,4 +1,4 @@
-package me.donghun.gatewayserver.account
+package me.donghun.apiserver.account
 
 import org.springframework.data.jpa.repository.JpaRepository
 

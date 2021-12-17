@@ -1,25 +1,24 @@
-package me.donghun.gatewayserver.account
+package me.donghun.apiserver.account
 
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
 import com.fasterxml.jackson.databind.ObjectMapper
-import me.donghun.gatewayserver.TokenManager
+import me.donghun.apiserver.TokenManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RestController
-import java.util.*
+import org.springframework.web.bind.annotation.ResponseBody
 
-@RestController
+@Controller
 class AccountController @Autowired constructor(val accountRepository: AccountRepository) {
 
+    // TODO validation
     @PostMapping("/signin")
     fun signin(account: Account): ResponseEntity<Any> {
         val findByUsername = accountRepository.findByUsername(account.username)
 
-        // TODO validation
-        if(findByUsername != null) {
-            return ResponseEntity.badRequest().body("username '${account.username}' already exists")
+        if(findByUsername == null) {
+            return ResponseEntity.badRequest().build()
         }
 
         // TODO password encryption
@@ -35,6 +34,10 @@ class AccountController @Autowired constructor(val accountRepository: AccountRep
         )
     }
 
-
+    @GetMapping("/hello")
+    @ResponseBody
+    fun hello(): String {
+        return "Hello World"
+    }
 
 }

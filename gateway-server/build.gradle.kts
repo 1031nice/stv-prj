@@ -30,10 +30,6 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-gateway:3.1.0")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
 
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.postgresql:postgresql:42.3.1")
-    implementation("com.h2database:h2:2.0.202")
-
     implementation("com.auth0:java-jwt:3.18.2")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
