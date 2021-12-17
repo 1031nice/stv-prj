@@ -1,5 +1,7 @@
 package me.donghun.gatewayserver.account
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import me.donghun.gatewayserver.TokenManager
 import me.donghun.gatewayserver.UserRole
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
@@ -9,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.function.BodyInserters
+import wiremock.org.eclipse.jetty.util.ajax.JSON
 
 @SpringBootTest
 @AutoConfigureWebTestClient
@@ -19,18 +22,23 @@ internal class AccountControllerTest @Autowired constructor(private val webTestC
     @Test
     fun signin() {
         val account = Account(username = "username1", password = "password1", roles = listOf(UserRole.NORMAL))
-        val accessToken = "access-token"
-        val refreshToken = "refresh-token"
 
-        webTestClient.post()
+        val result = webTestClient.post()
             .uri("/signin")
-            .body(BodyInserters.fromFormData("username", account.username)
-                .with("password", account.password))
+            .body(
+                BodyInserters.fromFormData("username", account.username)
+                    .with("password", account.password)
+            )
             .exchange()
             .expectStatus().isOk
-            .expectHeader().valueEquals("access-token", "access-token")
-            .expectHeader().valueEquals("refresh-token", "refresh-token")
+            .expectBody()
+            .jsonPath("$.access-token").exists()
+            .jsonPath("$.refresh-token").exists()
+            .returnResult()
 
+        val json = JSON.parse(String(result.responseBody!!)) as Map<String, String>
+        assertThat(TokenManager.decode(json["access-token"]!!)?.subject).isEqualTo(account.username)
+        assertThat(TokenManager.decode(json["refresh-token"]!!)?.subject).isEqualTo(account.username)
         assertThat(accountRepository.findByUsername(account.username)).isNotNull
     }
 
