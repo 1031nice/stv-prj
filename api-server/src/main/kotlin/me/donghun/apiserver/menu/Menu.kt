@@ -9,5 +9,5 @@ class Menu (
     @GeneratedValue
     var id: Long? = null,
     var name: String,
-    var price: Integer,
+    var price: Int,
 )

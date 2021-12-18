@@ -3,12 +3,13 @@ package me.donghun.apiserver
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.interfaces.DecodedJWT
+import java.nio.charset.StandardCharsets
 import java.util.*
 
 object TokenManager {
 
     private const val hour = 60 * 60 * 1000L
-    private val algorithm = Algorithm.HMAC256("super-secret")
+    private val algorithm = Algorithm.HMAC256("super-secret".toByteArray(StandardCharsets.UTF_8))
     private val verifier = JWT.require(algorithm).build()
 
     fun generateAccessToken(username: String): String {
