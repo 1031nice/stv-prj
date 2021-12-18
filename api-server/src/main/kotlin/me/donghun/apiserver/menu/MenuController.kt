@@ -17,8 +17,13 @@ class MenuController @Autowired constructor(private val menuRepository: MenuRepo
     }
 
     @PostMapping
-    fun createMenu(): ResponseEntity<Any> {
-        return ResponseEntity.badRequest().build()
+    fun addMenu(menu: Menu): ResponseEntity<Any> {
+        val findByName =  menuRepository.findByName(menu.name)
+        if(findByName != null) return ResponseEntity.badRequest().build()
+
+        menuRepository.save(menu)
+
+        return ResponseEntity.ok(menu)
     }
 
 }

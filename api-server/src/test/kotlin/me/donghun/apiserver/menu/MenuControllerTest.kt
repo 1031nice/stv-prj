@@ -2,6 +2,7 @@ package me.donghun.apiserver.menu
 
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers
+import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.containsString
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -42,10 +43,22 @@ class MenuControllerTest @Autowired constructor(private val mockMvc: MockMvc,
             .param("name", "탕수육")
             .param("price", "15000"))
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$[*].name", containsString("탕수육")))
+                .andExpect(jsonPath("$.name", `is`("탕수육")))
                 .andDo(print())
 
         assertThat(menuRepository.findByName("탕수육")).isNotNull
+    }
+
+    @DisplayName("Add menu failure - duplicated name")
+    @Test
+    fun addMenuFailure_duplicatedName() {
+        menuRepository.save(Menu(name = "MENU", price = 10000))
+
+        mockMvc.perform(post("/menus")
+            .param("name", "MENU")
+            .param("price", "10000"))
+            .andExpect(status().isBadRequest)
+            .andDo(print())
     }
 
 }
