@@ -2,6 +2,7 @@ package me.donghun.apiserver.account
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import me.donghun.apiserver.TokenManager
+import org.apache.commons.codec.digest.DigestUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -18,6 +19,10 @@ class AccountController @Autowired constructor(val accountRepository: AccountRep
     fun signin(account: Account): ResponseEntity<Any> {
         val findByUsername = accountRepository.findByUsername(account.username) ?: return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
 
+        if (!DigestUtils.sha256Hex(account.password).equals(findByUsername.password)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        }
+
         val accessToken = TokenManager.generateAccessToken(account.username)
         val refreshToken = TokenManager.generateRefreshToken(account.username)
 
@@ -33,7 +38,7 @@ class AccountController @Autowired constructor(val accountRepository: AccountRep
         val findByUsername = accountRepository.findByUsername(account.username)
         if(findByUsername != null) return ResponseEntity.badRequest().build()
 
-        // TODO password encryption
+        account.password = DigestUtils.sha256Hex(account.password);
         accountRepository.save(account)
 
         return ResponseEntity.ok().build()

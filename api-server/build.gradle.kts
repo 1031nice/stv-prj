@@ -28,6 +28,8 @@ dependencies {
 
     implementation("com.auth0:java-jwt:3.18.2")
 
+    implementation("commons-codec:commons-codec:1.15")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 

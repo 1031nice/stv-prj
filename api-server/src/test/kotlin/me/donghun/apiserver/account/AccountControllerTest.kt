@@ -1,5 +1,6 @@
 package me.donghun.apiserver.account
 
+import org.apache.commons.codec.digest.DigestUtils
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -15,18 +16,20 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 @SpringBootTest
 @AutoConfigureMockMvc
 @org.springframework.transaction.annotation.Transactional
-internal class AccountControllerTest @Autowired constructor(private val mockMvc: MockMvc,
+class AccountControllerTest @Autowired constructor(private val mockMvc: MockMvc,
                                                             private val accountRepository: AccountRepository) {
 
     @DisplayName("Sign-in")
     @Test
     fun signin() {
-        val account = Account(username = "username1", password = "password1", roles = listOf(UserRole.NORMAL))
+        val plainPassword = "password1"
+        val account = Account(username = "username1", password = plainPassword, roles = listOf(UserRole.NORMAL))
+        account.password = DigestUtils.sha256Hex(account.password)
         accountRepository.save(account)
 
         mockMvc.perform(post("/signin")
             .param("username", account.username)
-            .param("password", account.password))
+            .param("password", plainPassword))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.access-token").exists())
                 .andExpect(jsonPath("$.refresh-token").exists())
