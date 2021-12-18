@@ -1,18 +1,19 @@
 package me.donghun.apiserver.menu
 
+import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.containsString
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -23,14 +24,28 @@ class MenuControllerTest @Autowired constructor(private val mockMvc: MockMvc,
     @DisplayName("Get menus")
     @Test
     fun getMenus() {
-        menuRepository.save(Menu(name = "짜장면", price = 5000))
-        menuRepository.save(Menu(name = "짬뽕", price = 6000))
+        menuRepository.save(Menu(name = "MENU1", price = 1000))
+        menuRepository.save(Menu(name = "MENU2", price = 2000))
 
+        /*
+        TODO 테스트 DB H2, 운영 DB postgreSQL로 분리한 뒤 제대로 테스트
+         */
         mockMvc.perform(get("/menus"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$[*].name", containsString("짜장면")))
-            .andExpect(jsonPath("$[*].name", containsString("짬뽕")))
             .andDo(print())
+    }
+
+    @DisplayName("Add menu")
+    @Test
+    fun addMenu() {
+        mockMvc.perform(post("/menus")
+            .param("name", "탕수육")
+            .param("price", "15000"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$[*].name", containsString("탕수육")))
+                .andDo(print())
+
+        assertThat(menuRepository.findByName("탕수육")).isNotNull
     }
 
 }
