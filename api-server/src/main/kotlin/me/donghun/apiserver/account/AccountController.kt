@@ -3,6 +3,7 @@ package me.donghun.apiserver.account
 import com.fasterxml.jackson.databind.ObjectMapper
 import me.donghun.apiserver.TokenManager
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
@@ -15,7 +16,7 @@ class AccountController @Autowired constructor(val accountRepository: AccountRep
     // TODO validation
     @PostMapping("/signin")
     fun signin(account: Account): ResponseEntity<Any> {
-        val findByUsername = accountRepository.findByUsername(account.username) ?: return ResponseEntity.badRequest().build()
+        val findByUsername = accountRepository.findByUsername(account.username) ?: return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
 
         val accessToken = TokenManager.generateAccessToken(account.username)
         val refreshToken = TokenManager.generateRefreshToken(account.username)
