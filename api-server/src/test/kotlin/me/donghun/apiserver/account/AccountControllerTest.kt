@@ -26,6 +26,7 @@ internal class AccountControllerTest @Autowired constructor(private val mockMvc:
     @Test
     fun signin() {
         val account = Account(username = "username1", password = "password1", roles = listOf(UserRole.NORMAL))
+        accountRepository.save(account)
 
         mockMvc.perform(post("/signin")
             .param("username", account.username)
@@ -34,8 +35,6 @@ internal class AccountControllerTest @Autowired constructor(private val mockMvc:
                 .andExpect(jsonPath("$.access-token").exists())
                 .andExpect(jsonPath("$.refresh-token").exists())
                 .andDo(print())
-
-        assertThat(accountRepository.findByUsername(account.username)).isNotNull
     }
 
     @DisplayName("Sample API")

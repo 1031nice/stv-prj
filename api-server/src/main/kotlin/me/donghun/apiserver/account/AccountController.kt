@@ -15,14 +15,7 @@ class AccountController @Autowired constructor(val accountRepository: AccountRep
     // TODO validation
     @PostMapping("/signin")
     fun signin(account: Account): ResponseEntity<Any> {
-        val findByUsername = accountRepository.findByUsername(account.username)
-
-        if(findByUsername == null) {
-            return ResponseEntity.badRequest().build()
-        }
-
-        // TODO password encryption
-        accountRepository.save(account)
+        val findByUsername = accountRepository.findByUsername(account.username) ?: return ResponseEntity.badRequest().build()
 
         val accessToken = TokenManager.generateAccessToken(account.username)
         val refreshToken = TokenManager.generateRefreshToken(account.username)
