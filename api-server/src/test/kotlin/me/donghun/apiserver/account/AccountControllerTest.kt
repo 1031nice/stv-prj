@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@org.springframework.transaction.annotation.Transactional
 internal class AccountControllerTest @Autowired constructor(private val mockMvc: MockMvc,
                                                             private val accountRepository: AccountRepository) {
 

@@ -28,6 +28,17 @@ class AccountController @Autowired constructor(val accountRepository: AccountRep
         )
     }
 
+    @PostMapping("/signup")
+    fun signup(account: Account): ResponseEntity<Any> {
+        val findByUsername = accountRepository.findByUsername(account.username)
+        if(findByUsername != null) return ResponseEntity.badRequest().build()
+
+        // TODO password encryption
+        accountRepository.save(account)
+
+        return ResponseEntity.ok().build()
+    }
+
     @GetMapping("/hello")
     @ResponseBody
     fun hello(): String {
