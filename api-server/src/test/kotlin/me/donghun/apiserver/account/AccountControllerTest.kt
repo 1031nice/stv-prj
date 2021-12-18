@@ -1,5 +1,6 @@
 package me.donghun.apiserver.account
 
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,6 +41,33 @@ internal class AccountControllerTest @Autowired constructor(private val mockMvc:
             .param("username", account.username)
             .param("password", account.password))
             .andExpect(status().isUnauthorized)
+            .andDo(print())
+    }
+
+    @DisplayName("Sign-up")
+    @Test
+    fun signUp() {
+        val account = Account(username = "username1", password = "password1", roles = listOf(UserRole.NORMAL))
+
+        mockMvc.perform(post("/signup")
+            .param("username", account.username)
+            .param("password", account.password))
+            .andExpect(status().isOk)
+            .andDo(print())
+
+        assertThat(accountRepository.findByUsername(account.username)).isNotNull
+    }
+
+    @DisplayName("Sign-up failure - duplicated id")
+    @Test
+    fun signUpFailure_duplicatedId() {
+        val account = Account(username = "username1", password = "password1", roles = listOf(UserRole.NORMAL))
+        accountRepository.save(account);
+
+        mockMvc.perform(post("/signup")
+            .param("username", account.username)
+            .param("password", account.password))
+            .andExpect(status().isBadRequest)
             .andDo(print())
     }
 
