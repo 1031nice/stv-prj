@@ -23,7 +23,7 @@ class AccountControllerTest @Autowired constructor(private val mockMvc: MockMvc,
     @Test
     fun signin() {
         val plainPassword = "password1"
-        val account = Account(username = "username1", password = plainPassword, roles = listOf(UserRole.USER))
+        val account = Account(username = "username1", password = plainPassword, role = UserRole.USER)
         account.password = DigestUtils.sha256Hex(account.password)
         accountRepository.save(account)
 
@@ -39,7 +39,7 @@ class AccountControllerTest @Autowired constructor(private val mockMvc: MockMvc,
     @DisplayName("Sign-in failure")
     @Test
     fun signinFailure() {
-        val account = Account(username = "username1", password = "password1", roles = listOf(UserRole.USER))
+        val account = Account(username = "username1", password = "password1", role = UserRole.USER)
 
         mockMvc.perform(post("/signin")
             .param("username", account.username)
@@ -51,7 +51,7 @@ class AccountControllerTest @Autowired constructor(private val mockMvc: MockMvc,
     @DisplayName("Sign-up")
     @Test
     fun signUp() {
-        val account = Account(username = "username1", password = "password1", roles = listOf(UserRole.USER))
+        val account = Account(username = "username1", password = "password1", role = UserRole.USER)
 
         mockMvc.perform(post("/signup")
             .param("username", account.username)
@@ -65,7 +65,7 @@ class AccountControllerTest @Autowired constructor(private val mockMvc: MockMvc,
     @DisplayName("Sign-up failure - duplicated id")
     @Test
     fun signUpFailure_duplicatedId() {
-        val account = Account(username = "username1", password = "password1", roles = listOf(UserRole.USER))
+        val account = Account(username = "username1", password = "password1", role = UserRole.USER)
         accountRepository.save(account);
 
         mockMvc.perform(post("/signup")

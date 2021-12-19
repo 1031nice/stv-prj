@@ -9,7 +9,6 @@ class Account(
     var id: Long? = null,
     var username: String,
     var password: String,
-    @ElementCollection(targetClass = UserRole::class)
     @Enumerated(EnumType.STRING)
-    var roles: List<UserRole>?
+    var role: UserRole?
 )

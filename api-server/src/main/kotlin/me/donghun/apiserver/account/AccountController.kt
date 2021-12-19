@@ -23,8 +23,8 @@ class AccountController @Autowired constructor(val accountRepository: AccountRep
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
         }
 
-        val accessToken = TokenManager.generateAccessToken(account.username)
-        val refreshToken = TokenManager.generateRefreshToken(account.username)
+        val accessToken = TokenManager.generateAccessToken(account.username, findByUsername.role!!)
+        val refreshToken = TokenManager.generateRefreshToken(account.username, findByUsername.role!!)
 
         return ResponseEntity.ok().body(
             ObjectMapper().writeValueAsString(

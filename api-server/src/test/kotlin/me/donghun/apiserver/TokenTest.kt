@@ -28,7 +28,7 @@ class TokenTest {
 
         expiredToken = JWT.create()
             .withSubject(username)
-            .withExpiresAt(Date(System.currentTimeMillis() - 1))
+            .withExpiresAt(Date(System.currentTimeMillis() - 1000))
             .sign(algorithm)
 
         verifier = JWT.require(algorithm).build()
