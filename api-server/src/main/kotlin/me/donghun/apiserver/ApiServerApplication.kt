@@ -24,8 +24,8 @@ class ApiServerApplication {
     @Bean
     fun runner(): ApplicationRunner {
         return ApplicationRunner {
-            accountRepository.save(Account(null, "owner", DigestUtils.sha256Hex("owner"), UserRole.OWNER))
-            accountRepository.save(Account(null, "user", DigestUtils.sha256Hex("user"), UserRole.USER))
+            accountRepository.save(Account(null, "owner", DigestUtils.sha256Hex("owner"), listOf(UserRole.OWNER, UserRole.USER)))
+            accountRepository.save(Account(null, "user", DigestUtils.sha256Hex("user"), listOf(UserRole.USER)))
 
             menuRepository.save(Menu(null, "짜장면", 5000))
             menuRepository.save(Menu(null, "짬뽕", 6000))

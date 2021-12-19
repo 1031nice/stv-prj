@@ -13,25 +13,18 @@ object TokenManager {
     private val algorithm = Algorithm.HMAC256("super-secret".toByteArray(StandardCharsets.UTF_8))
     private val verifier = JWT.require(algorithm).build()
 
-    fun generateAccessToken(username: String, role: UserRole): String {
-        return generateToken(username, hour, role)
+    fun generateAccessToken(username: String, roles: List<UserRole>): String {
+        return generateToken(username, hour, roles)
     }
 
-    fun generateRefreshToken(username: String, role: UserRole): String {
-        return generateToken(username, 24 * 7 * hour, role)
+    fun generateRefreshToken(username: String, roles: List<UserRole>): String {
+        return generateToken(username, 24 * 7 * hour, roles)
     }
 
-    private fun generateToken(username: String, expireAfter: Long): String {
+    private fun generateToken(username: String, expireAfter: Long, roles: List<UserRole>): String {
         return JWT.create()
             .withSubject(username)
-            .withExpiresAt(Date(System.currentTimeMillis() + expireAfter))
-            .sign(algorithm)
-    }
-
-    private fun generateToken(username: String, expireAfter: Long, role: UserRole): String {
-        return JWT.create()
-            .withSubject(username)
-            .withClaim("role", role.name)
+            .withArrayClaim("roles", roles.map { it.name }.toTypedArray())
             .withExpiresAt(Date(System.currentTimeMillis() + expireAfter))
             .sign(algorithm)
     }
