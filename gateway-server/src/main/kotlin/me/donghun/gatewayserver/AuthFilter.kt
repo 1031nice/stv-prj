@@ -2,6 +2,7 @@ package me.donghun.gatewayserver
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.auth0.jwt.interfaces.DecodedJWT
 import org.springframework.cloud.gateway.filter.GatewayFilter
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory
 import org.springframework.http.HttpStatus
@@ -16,22 +17,21 @@ class AuthFilter: AbstractGatewayFilterFactory<UserRole>() {
         return GatewayFilter { exchange, chain ->
             val request = exchange.request
             val response = exchange.response
-            if(request.headers.containsKey("Authorization")) {
-                try {
-                    val tokenString = request.headers["Authorization"]!![0].substringAfter(' ')
-                    val decodedJWT = verifier.verify(tokenString)
-                    if (!decodedJWT.getClaim("roles").asList(String::class.java).contains(role.name)) {
-                        response.statusCode = HttpStatus.UNAUTHORIZED
-                        return@GatewayFilter response.setComplete()
-                    }
-                } catch (e: Exception) {
-                    response.statusCode = HttpStatus.UNAUTHORIZED
-                    return@GatewayFilter response.setComplete()
-                }
-            } else {
+
+            val tokenString = request.headers["Authorization"]!![0].substringAfter(' ')
+            val decodedJWT: DecodedJWT
+            try {
+                decodedJWT = verifier.verify(tokenString)
+            } catch (e: Exception) {
                 response.statusCode = HttpStatus.UNAUTHORIZED
                 return@GatewayFilter response.setComplete()
             }
+
+            if (!decodedJWT.getClaim("roles").asList(String::class.java).contains(role.name)) {
+                response.statusCode = HttpStatus.UNAUTHORIZED
+                return@GatewayFilter response.setComplete()
+            }
+
             chain.filter(exchange).then(Mono.fromRunnable {
                 println("API ${request.methodValue} ${request.path} is called")
             })

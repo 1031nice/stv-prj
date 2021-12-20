@@ -27,6 +27,8 @@ class GatewayServerApplication {
             .route {
                 it.method(HttpMethod.GET)
                     .and()
+                    .header("Authorization")
+                    .and()
                     .path("/menus").filters {
                         f -> f.filter(AuthFilter().apply(UserRole.USER))
                 }.uri(apiServer)
@@ -34,6 +36,8 @@ class GatewayServerApplication {
 
             .route {
                 it.method(HttpMethod.POST)
+                    .and()
+                    .header("Authorization")
                     .and()
                     .path("/menus").filters {
                         f -> f.filter(AuthFilter().apply(UserRole.OWNER))
