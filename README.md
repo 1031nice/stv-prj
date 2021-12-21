@@ -1,6 +1,9 @@
 stove dev camp 2기
 개인 프로젝트
 
+# Architecture
+![](/architecture.png)
+
 API gateway: http://localhost:8090
 
 API server: http://localhost:8080
